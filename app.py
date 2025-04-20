@@ -1,15 +1,25 @@
-# app.py
 import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import os
 
 st.set_page_config(page_title="🩺 HealthGuard UAE - Diabetes AI", layout="centered")
 
 st.title("🌟 HealthGuard UAE - Diabetes AI Agent")
 st.markdown("Helping you stay healthy and informed 🇦🇪")
 
-model = joblib.load("diabetes_model.pkl")
+# Load the model using an absolute path with error handling
+model_path = os.path.join(os.path.dirname(__file__), "diabetes_model.pkl")
+
+try:
+    model = joblib.load(model_path)
+except FileNotFoundError:
+    st.error("Error: The model file 'diabetes_model.pkl' was not found.")
+    st.stop()  # Stop the app if the model file is not found
+except Exception as e:
+    st.error(f"An error occurred while loading the model: {e}")
+    st.stop()  # Stop the app if any other error occurs
 
 st.header("🔍 Predict Your Diabetes Risk")
 glucose = st.slider("Glucose Level", 0, 200, 100)
@@ -31,6 +41,3 @@ if st.button("🧠 Predict"):
         st.warning("💡 Suggestion: Maintain a healthy lifestyle. Reduce sugar, walk daily, and stay hydrated.")
         st.markdown("### 🏥 Nearby Diabetes Clinics in UAE")
         st.info("- Dubai Diabetes Center\n- Cleveland Clinic Abu Dhabi\n- Mediclinic City Hospital\n- NMC Specialty Hospital")
-
-
-
